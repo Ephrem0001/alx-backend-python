@@ -44,3 +44,4 @@ def calculate_average_age():
 # Uncomment to run directly:
 # if __name__ == "__main__":
 #     calculate_average_age()
+
