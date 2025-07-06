@@ -1,27 +1,33 @@
-from seed import connect_to_prodev
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
+import os
 
+# Load environment variables
+load_dotenv()
 
 def paginate_users(page_size, offset):
     """
-    Fetch a single page of users from the database.
+    Helper function to fetch a page of users from the database.
     """
-    connection = connect_to_prodev()
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT * FROM user_data LIMIT {page_size} OFFSET {offset}")
+    connection = psycopg2.connect(
+        host=os.getenv("PGHOST"),
+        port=os.getenv("PGPORT"),
+        user=os.getenv("PGUSER"),
+        password=os.getenv("PGPASSWORD"),
+        dbname=os.getenv("PGDATABASE")
+    )
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
+    cursor.execute(
+        f"SELECT * FROM user_data LIMIT {page_size} OFFSET {offset}"
+    )
     rows = cursor.fetchall()
-    # Convert each row to dictionary using column names
-    columns = [desc[0] for desc in cursor.description]
-    result = [dict(zip(columns, row)) for row in rows]
-
-    cursor.close()
     connection.close()
-
-    return result
-
+    return rows
 
 def lazy_pagination(page_size):
     """
-    Generator that lazily fetches and yields pages of user data.
+    Generator that yields pages of user data lazily.
     """
     offset = 0
     while True:
