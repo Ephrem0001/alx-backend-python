@@ -2,16 +2,21 @@ import psycopg2
 from psycopg2 import Error
 import csv
 import uuid
+from dotenv import load_dotenv
+import os
+
+# Load variables from .env into environment
+load_dotenv()
 
 
 def connect_db():
     """Connects to PostgreSQL server."""
     try:
         connection = psycopg2.connect(
-            host="localhost",
-            user="your_username",
-            password="your_password",
-            dbname="your_database"
+            host=os.getenv("PGHOST"),
+            user=os.getenv("PGUSER"),
+            password=os.getenv("PGPASSWORD"),
+            dbname=os.getenv("PGDATABASE")
         )
         print("Connected to PostgreSQL database")
         return connection
@@ -20,14 +25,14 @@ def connect_db():
     return None
 
 def create_database(connection):
-    """Creates your_database database if not exists."""
+    """Creates ALX_prodev database if not exists."""
     try:
         connection.autocommit = True
         cursor = connection.cursor()
-        cursor.execute("SELECT 1 FROM pg_database WHERE datname = 'your_database'")
+        cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{os.getenv('PGDATABASE')}'")
         exists = cursor.fetchone()
         if not exists:
-            cursor.execute("CREATE DATABASE your_database")
+            cursor.execute(f"CREATE DATABASE {os.getenv('PGDATABASE')}")
             print("Database created successfully")
         else:
             print("Database already exists")
@@ -36,13 +41,13 @@ def create_database(connection):
 
 
 def connect_to_prodev():
-    """Connects to the your_database database."""
+    """Connects to the ALX_prodev database."""
     try:
         connection = psycopg2.connect(
-            host="localhost",
-            user="your_username",
-            password="your_password",
-            dbname="your_database"
+            host=os.getenv("PGHOST"),
+            user=os.getenv("PGUSER"),
+            password=os.getenv("PGPASSWORD"),
+            dbname=os.getenv("PGDATABASE")
         )
         return connection
     except Error as e:
@@ -99,3 +104,11 @@ def insert_data(connection, csv_file):
         print("Data inserted successfully")
     except Error as e:
         print(f"Error inserting data: {e}")
+
+if __name__ == "__main__":
+    connection = connect_db()
+    if connection:
+        create_table(connection)
+        # Use the correct path to your CSV file
+        insert_data(connection, 'data/user_data.csv')
+        connection.close()
