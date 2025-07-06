@@ -3,8 +3,9 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
+
 
 def stream_users_in_batches(batch_size):
     """
@@ -17,6 +18,7 @@ def stream_users_in_batches(batch_size):
         password=os.getenv("PGPASSWORD"),
         dbname=os.getenv("PGDATABASE")
     )
+    # Use server-side named cursor to avoid loading all rows into memory
     cursor = connection.cursor(name="batch_cursor", cursor_factory=RealDictCursor)
     cursor.itersize = batch_size
 
@@ -30,6 +32,7 @@ def stream_users_in_batches(batch_size):
 
     cursor.close()
     connection.close()
+
 
 def batch_processing(batch_size):
     """
