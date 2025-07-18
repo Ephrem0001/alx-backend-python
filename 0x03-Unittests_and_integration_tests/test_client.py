@@ -11,6 +11,7 @@ from client import GithubOrgClient
 class TestGithubOrgClient(unittest.TestCase):
     """Test cases for GithubOrgClient class."""
 
+
     @parameterized.expand([
         ("google", {"org": "Google"}),
         ("abc", {"org": "ABC"}),
@@ -31,6 +32,7 @@ class TestGithubOrgClient(unittest.TestCase):
         )
         self.assertEqual(result, expected_payload)
 
+
     def test_public_repos_url(self):
         """Test that _public_repos_url returns expected value."""
         with patch.object(
@@ -46,6 +48,7 @@ class TestGithubOrgClient(unittest.TestCase):
                 client._public_repos_url,
                 "https://api.github.com/orgs/testorg/repos"
             )
+
 
     @patch("utils.get_json")
     def test_public_repos(self, mock_get_json):
@@ -73,6 +76,7 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once_with(
                 "https://api.github.com/orgs/testorg/repos"
             )
+
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
