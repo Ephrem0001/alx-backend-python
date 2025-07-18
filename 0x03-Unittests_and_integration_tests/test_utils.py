@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
+"""Unit tests for utils.py functions: access_nested_map, get_json, and memoize."""
+
 import unittest
 from parameterized import parameterized
 from unittest.mock import patch, Mock
 
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
-    """Unit tests for the access_nested_map function"""
+    """Unit tests for the access_nested_map function."""
 
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -28,7 +30,7 @@ class TestAccessNestedMap(unittest.TestCase):
 
 
 class TestGetJson(unittest.TestCase):
-    """Unit tests for the get_json function"""
+    """Unit tests for the get_json function."""
 
     @parameterized.expand([
         ("http://example.com", {"payload": True}),
@@ -36,7 +38,6 @@ class TestGetJson(unittest.TestCase):
     ])
     @patch("utils.requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
-        # Mock the HTTP response to return test_payload
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -45,11 +46,12 @@ class TestGetJson(unittest.TestCase):
         mock_get.assert_called_once_with(test_url)
         self.assertEqual(result, test_payload)
 
+
 class TestMemoize(unittest.TestCase):
-    """Unit tests for the memoize decorator"""
+    """Unit tests for the memoize decorator."""
 
     def test_memoize(self):
-        """Test that memoization caches method result"""
+        """Test that memoization caches method result."""
 
         class TestClass:
             def a_method(self):
@@ -61,9 +63,7 @@ class TestMemoize(unittest.TestCase):
 
         with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
             instance = TestClass()
-            # First call should invoke a_method
             result1 = instance.a_property
-            # Second call should use memoized result, not call a_method again
             result2 = instance.a_property
 
             self.assertEqual(result1, 42)
