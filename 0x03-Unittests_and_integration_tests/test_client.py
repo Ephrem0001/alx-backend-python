@@ -15,6 +15,9 @@ class TestGithubOrgClient(unittest.TestCase):
         ("google", {"org": "Google"}),
         ("abc", {"org": "ABC"}),
     ])
+    # NOTE: The patch path must match how get_json is imported in GithubOrgClient.
+    # If GithubOrgClient does: from client import get_json, then patch 'client.get_json'.
+    # If it does: from .utils import get_json, then patch 'utils.get_json'.
     @patch("client.get_json")
     def test_org(self, org_name, expected_payload, mock_get_json):
         """Test GithubOrgClient.org returns expected dictionary and calls get_json once."""
