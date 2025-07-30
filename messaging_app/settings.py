@@ -1,6 +1,3 @@
-# settings.py
-
-# ...existing code...
 
 AUTH_USER_MODEL = 'chats.User'
 
@@ -12,5 +9,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
 }
-
-# ...existing code...
