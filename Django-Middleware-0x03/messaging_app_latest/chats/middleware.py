@@ -4,19 +4,18 @@ from django.utils.deprecation import MiddlewareMixin
 from django.http import HttpResponseForbidden
 import time
 
-logger = logging.getLogger(__name__)
-file_handler = logging.FileHandler('requests.log')
-logger.addHandler(file_handler)
-logger.setLevel(logging.INFO)
-
-class RequestLoggingMiddleware(MiddlewareMixin):
+class RequestLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
+        logging.basicConfig(
+            filename='requests.log',
+            level=logging.INFO,
+            format='%(message)s'
+        )
 
     def __call__(self, request):
-        user = request.user if hasattr(request, 'user') and request.user.is_authenticated else 'Anonymous'
-        log_entry = f"[{datetime.now()}] {request.method} {request.get_full_path()} by {user}"
-        logger.info(log_entry)
+        user = request.user if hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) else 'Anonymous'
+        logging.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
         response = self.get_response(request)
         return response
 
